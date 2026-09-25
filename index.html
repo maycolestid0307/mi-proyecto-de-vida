@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi proyecto de vida</title>
+<meta name="description" content="Hacia dónde voy, por qué y cómo lo voy a lograr.">
+
+<!--
+  CÓMO EDITAR ESTA PÁGINA
+  1. Cambia los textos de ejemplo por los tuyos (busca los [corchetes]).
+  2. Áreas de mi vida: el número de style="--avance:40" es el porcentaje de avance.
+  3. Ruta y plan de 90 días: copia y pega un <li> para agregar más elementos.
+  4. Colores: están al inicio del CSS, en :root.
+-->
+
+<style>
+  :root {
+    --niebla: #f8fcfc;
+    --pino: #000000;
+    --pino-suave: #3D5C59;
+    --calendula: #9ed9e4;
+    --cielo: #7FB7C9;
+    --linea: rgba(26, 24, 24, 0.815);
+    --display: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+    --texto: 'Literata', Georgia, 'Times New Roman', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
+
+  body {
+    margin: 0;
+    background: var(--niebla);
+    color: var(--pino);
+    font-family: var(--texto);
+    font-size: 1.125rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--display);
+    line-height: 1.08;
+    letter-spacing: -.02em;
+    margin: 0;
+  }
+
+  p { margin: 0; }
+  ul { margin: 0; padding: 0; list-style: none; }
+
+  a { color: inherit; }
+
+  :focus-visible { outline: 3px solid var(--pino); outline-offset: 3px; }
+  .oscura :focus-visible { outline-color: var(--calendula); }
+
+  .contenedor { width: min(100% - 2.5rem, 68rem); margin-inline: auto; }
+
+  .seccion { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
+
+  .seccion h2 {
+    font-size: clamp(1.9rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    margin-bottom: 2rem;
+  }
+
+  /* ---------- Encabezado ---------- */
+  .cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--niebla);
+    border-bottom: 1px solid var(--linea);
+  }
+  .cabecera .contenedor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 3.5rem;
+  }
+  .marca {
+    font-family: var(--display);
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cabecera nav {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: .95rem;
+  }
+  .cabecera nav a { text-decoration: none; padding-block: .5rem; }
+  .cabecera nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  /* ---------- Inicio ---------- */
+  .inicio { padding-block: clamp(3rem, 9vw, 7rem) 3rem; }
+
+  .inicio h1 {
+    font-size: clamp(2.4rem, 7.2vw, 5.6rem);
+    font-weight: 800;
+    max-width: 19ch;
+  }
+  .inicio .lema {
+    margin-top: 1.75rem;
+    max-width: 34rem;
+    font-size: 1.25rem;
+    color: var(--pino-suave);
+  }
+
+  .ruta-visual { margin: 3.5rem 0 0; }
+  .ruta-visual svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .ruta-visual figcaption {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    font-family: var(--display);
+    font-weight: 700;
+  }
+
+  .camino-base { fill: none; stroke: var(--pino); stroke-opacity: .25; stroke-width: 4; stroke-dasharray: 2 14; stroke-linecap: round; }
+  .camino { fill: none; stroke: var(--pino); stroke-width: 4; stroke-linecap: round; }
+  .punto-ini { fill: var(--pino); r: 12px; }
+  .punto-fin { fill: var(--calendula); stroke: var(--pino); stroke-width: 4; r: 14px; }
+
+  @media (max-width: 640px) {
+    .camino-base, .camino { stroke-width: 8; }
+    .punto-ini { r: 20px; }
+    .punto-fin { r: 24px; stroke-width: 8; }
+  }
+
+  @keyframes sube { to { opacity: 1; transform: none; } }
+  @keyframes trazo { to { stroke-dashoffset: 0; } }
+
+  /* Un solo momento animado: aparecen las palabras y luego se traza el camino */
+  @media (prefers-reduced-motion: no-preference) {
+    .palabra {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(.4em);
+      animation: sube .7s cubic-bezier(.2, .7, .2, 1) forwards;
+      animation-delay: calc(var(--i) * 70ms + 150ms);
+    }
+    .js .camino {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: trazo 2.4s ease-out 1s forwards;
+    }
+  }
+
+  /* ---------- Dónde estoy hoy ---------- */
+  .punto-partida {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 3rem;
+  }
+  .punto-partida .quien { max-width: 60ch; }
+  .punto-partida h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: .5rem; }
+  .punto-partida ul + h3 { margin-top: 2rem; }
+  .punto-partida li { position: relative; padding-left: 1.5rem; margin-block: .5rem; }
+  .punto-partida li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: .6em;
+    width: .7rem;
+    height: .7rem;
+    border-radius: 2px;
+    background: var(--pino);
+  }
+  .punto-partida .por-trabajar li::before { background: transparent; border: 2px solid var(--pino); }
+
+  @media (max-width: 820px) {
+    .punto-partida { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+
+  /* ---------- Visión, misión y valores ---------- */
+  .oscura { background: var(--pino); color: var(--niebla); }
+  .oscura p { color: rgba(234, 240, 238, .85); }
+
+  .vision-texto {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+    line-height: 1.2;
+    letter-spacing: -.01em;
+    max-width: 32ch;
+    color: var(--niebla) !important;
+  }
+
+  .mision { margin-top: 2.5rem; max-width: 46rem; }
+  .mision h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: .5rem; }
+
+  .valores-titulo { font-size: 1.2rem; font-weight: 700; margin: 4rem 0 1.25rem; }
+  .valores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1.75rem 2rem;
+  }
+  .valores li { border-top: 2px solid var(--cielo); padding-top: .75rem; }
+  .valores strong { display: block; font-family: var(--display); font-size: 1.3rem; font-weight: 700; }
+  .valores span { font-size: 1rem; color: rgba(234, 240, 238, .8); }
+
+  /* ---------- Áreas de mi vida ---------- */
+  .areas li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 13rem;
+    gap: 1rem 2rem;
+    align-items: center;
+    padding-block: 1.4rem;
+    border-top: 1px solid var(--linea);
+  }
+  .areas li:last-child { border-bottom: 1px solid var(--linea); }
+  .areas h3 { font-size: 1.35rem; font-weight: 700; }
+  .areas p { margin-top: .25rem; font-size: 1rem; color: var(--pino-suave); }
+
+  .barra {
+    display: block;
+    position: relative;
+    height: .6rem;
+    border-radius: 99px;
+    overflow: hidden;
+    background: var(--linea);
+  }
+  .barra::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(var(--avance) * 1%);
+    background: var(--pino);
+    border-radius: inherit;
+  }
+  .pct { display: block; margin-top: .35rem; font-family: var(--display); font-weight: 700; font-size: .95rem; }
+
+  @media (max-width: 640px) {
+    .areas li { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Mi ruta ---------- */
+  .ruta-lista { --col: 8.5rem; --linea-x: calc(var(--col) + 1.25rem); }
+
+  .hito {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--col) 1fr;
+    column-gap: 2.5rem;
+    padding-bottom: 3rem;
+  }
+  .hito:last-child { padding-bottom: 0; }
+
+  /* punto del hito */
+  .hito::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    left: calc(var(--linea-x) - 8px);
+    top: .55rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--niebla);
+    border: 2px solid var(--pino);
+  }
+  .hito.alcanzado::before { background: var(--calendula); }
+
+  /* tramo de línea hasta el siguiente hito; se rellena al hacer scroll */
+  .hito::after {
+    content: "";
+    position: absolute;
+    left: calc(var(--linea-x) - 1px);
+    top: calc(.55rem + 8px);
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--pino) calc(var(--seg, 0) * 100%), var(--linea) 0);
+  }
+  .hito:last-child::after { display: none; }
+
+  .cuando { text-align: right; }
+  .cuando strong { display: block; font-family: var(--display); font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
+  .cuando span { font-size: 1rem; color: var(--pino-suave); }
+
+  .hito h3 { font-size: 1.35rem; font-weight: 700; }
+  .hito p { margin-top: .35rem; max-width: 46ch; }
+
+  @media (max-width: 640px) {
+    .ruta-lista { --linea-x: .5rem; }
+    .hito { grid-template-columns: 1fr; padding-left: 2rem; row-gap: .5rem; }
+    .cuando { text-align: left; }
+    .cuando span { margin-left: .5rem; }
+    .cuando strong { display: inline; }
+  }
+
+  /* ---------- Plan de 90 días ---------- */
+  .calido { background: var(--calendula); color: var(--pino); }
+
+  .resumen {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 44rem;
+    font-family: var(--display);
+    font-weight: 700;
+    flex-wrap: wrap;
+  }
+  .barra-plan {
+    --avance: 0;
+    flex: 1 1 8rem;
+    position: relative;
+    height: .75rem;
+    border-radius: 99px;
+    overflow: hidden;
+    background: rgba(15, 61, 58, .2);
+  }
+  .barra-plan::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(var(--avance) * 1%);
+    background: var(--pino);
+    transition: width .3s ease;
+  }
+
+  .plan-lista { margin-top: 1.5rem; max-width: 44rem; }
+  .plan-lista label {
+    display: flex;
+    gap: .9rem;
+    align-items: flex-start;
+    padding-block: .9rem;
+    border-top: 1px solid rgba(15, 61, 58, .35);
+    cursor: pointer;
+  }
+  .plan-lista li:last-child label { border-bottom: 1px solid rgba(15, 61, 58, .35); }
+  .plan-lista input {
+    flex: none;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin: .2rem 0 0;
+    accent-color: var(--pino);
+  }
+  .plan-lista input:checked + span { text-decoration: line-through; text-decoration-thickness: 2px; }
+
+  /* ---------- Pie ---------- */
+  .pie { padding-block: 2.5rem 3.5rem; font-size: 1rem; color: var(--pino-suave); }
+  .pie strong { font-family: var(--display); color: var(--pino); }
+</style>
+</head>
+
+<body>
+
+<header class="cabecera">
+  <div class="contenedor">
+    <a class="marca" href="#inicio"><div Maycol estib neira guzman></div></a>
+    <nav aria-label="Secciones de la página">
+      <a href="#hoy">Dónde estoy</a>
+      <a href="#vision">Visión</a>
+      <a href="#areas">Áreas</a>
+      <a href="#ruta">Ruta</a>
+      <a href="#plan">Plan</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- INICIO -->
+  <section class="inicio" id="inicio">
+    <div class="contenedor">
+      <h1>Quiero una vida con propósito, tiempo libre y un trabajo que me importe.</h1>
+      <p class="lema">Este es mi proyecto de vida: hacia dónde voy, por qué y cómo lo voy a lograr.</p>
+
+      <figure class="ruta-visual">
+        <svg viewBox="0 0 1000 150" role="img" aria-label="Un camino que va desde hoy hasta mi visión">
+          <path class="camino-base" d="M14 118 C 150 118, 170 40, 320 62 S 480 138, 620 96 S 820 12, 986 32"/>
+          <path class="camino" pathLength="1" d="M14 118 C 150 118, 170 40, 320 62 S 480 138, 620 96 S 820 12, 986 32"/>
+          <circle class="punto-ini" cx="14" cy="118" r="12"/>
+          <circle class="punto-fin" cx="986" cy="32" r="14"/>
+        </svg>
+        <figcaption><span>Hoy</span><span>Mi visión</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- DÓNDE ESTOY HOY -->
+  <section class="seccion" id="hoy" aria-labelledby="t-hoy">
+    <div class="contenedor">
+      <h2 id="t-hoy">Dónde estoy hoy</h2>
+      <div class="punto-partida">
+        <p class="quien">
+            Soy Maycol, tengo 19  años y vivo en Bogota d.c . Actualmente  estoy estudio   ING EN SISTEMAS en la Universidad (UNIMINUTO)
+          Este proyecto reúne lo que quiero lograr y las decisiones que me van a llevar hasta ahí.
+        </p>
+        <div>
+          <h3>Lo que me impulsa</h3>
+          <ul class="fortalezas">
+            <li>Constancia cuando algo realmente me importa</li>
+            <li>Facilidad para trabajar con otras personas</li>
+            <li>Curiosidad por aprender cosas nuevas</li>
+            <li>Motivación por ayudar a mi familia</li>
+          </ul>
+          <h3>Lo que debo trabajar</h3>
+          <ul class="por-trabajar">
+            <li>Realizar las tareas largas</li>
+            <li>Manejar el estrés antes de entregas y exámenes</li>
+            <li>Cuidar mejor mi dinero</li>
+            <li>Organizar mis tiempos </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISIÓN, MISIÓN Y VALORES -->
+  <section class="seccion oscura" id="vision" aria-labelledby="t-vision">
+    <div class="contenedor">
+      <h2 id="t-vision">Hacia dónde voy</h2>
+      <p class="vision-texto">
+        En diez años vivo de un trabajo que mejora la vida de otras personas, con salud, estabilidad económica y tiempo para mi familia.
+      </p>
+
+      <div class="mision">
+        <h3>Cómo lo hago cada día</h3>
+        <p>Tomo decisiones pequeñas y coherentes: estudio, ahorro, me cuido y cumplo lo que prometo.</p>
+      </div>
+
+      <h3 class="valores-titulo">Lo que no negocio</h3>
+      <ul class="valores">
+        <li><strong>Honestidad</strong><span>Digo la verdad, incluso cuando cuesta.</span></li>
+        <li><strong>Disciplina</strong><span>Hago lo que dije, aunque no tenga ganas.</span></li>
+        <li><strong>Curiosidad</strong><span>Sigo aprendiendo y pregunto sin miedo.</span></li>
+        <li><strong>Gratitud</strong><span>Valoro a quienes me ayudaron a llegar aquí.</span></li>
+        <li><strong>Servicio</strong><span>Lo que logro debe servir también a otros.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ÁREAS DE MI VIDA -->
+  <section class="seccion" id="areas" aria-labelledby="t-areas">
+    <div class="contenedor">
+      <h2 id="t-areas">Las áreas de mi vida</h2>
+      <ul class="areas">
+        <li>
+          <div><h3>Estudios y carrera</h3><p>Terminar mi carrera y conseguir una práctica en mi campo.</p></div>
+        <li>
+          <div><h3>Economía</h3><p>Ahorrar el equivalente a seis meses de gastos.</p></div>
+          
+        <li>
+          <div><h3>Salud y cuerpo</h3><p>Hacer ejercicio tres veces por semana y dormir bien.</p></div>
+         
+        <li>
+          <div><h3>Familia y amistades</h3><p>Visitar a mi familia cada mes y cuidar a mis amigos.</p></div>
+         
+        <li>
+          <div><h3>Desarrollo personal</h3><p>Leer un libro al mes y aprender un idioma.</p></div>
+         
+      </ul>
+    </div>
+  </section>
+
+  <!-- MI RUTA -->
+  <section class="seccion" id="ruta" aria-labelledby="t-ruta" style="padding-top:0">
+    <div class="contenedor">
+      <h2 id="t-ruta">Mi ruta</h2>
+      <ol class="ruta-lista" style="list-style:none;padding:0;margin:0">
+        <li class="hito">
+          <div class="cuando"><strong>Hoy</strong><span>2026</span></div>
+          <div>
+            <h3>Punto de partida</h3>
+            <p>Termino lo que empecé y ordeno mis prioridades: estudio, trabajo y salud.</p>
+          </div>
+        </li>
+        <li class="hito">
+          <div class="cuando"><strong>En 1 año</strong><span>2027</span></div>
+          <div>
+            <h3>Base firme</h3>
+            <p>Tengo un ahorro de emergencia, una rutina de ejercicio estable y experiencia relacionada con lo que quiero hacer.</p>
+          </div>
+        </li>
+        <li class="hito">
+          <div class="cuando"><strong>En 5 años</strong><span>2031</span></div>
+          <div>
+            <h3>Crecimiento</h3>
+            <p>Trabajo en mi campo, tengo una especialización y una vivienda estable.</p>
+          </div>
+        </li>
+        <li class="hito">
+          <div class="cuando"><strong>En 10 años</strong><span>2036</span></div>
+          <div>
+            <h3>Visión cumplida</h3>
+            <p>Vivo de un proyecto que mejora la vida de otros y dedico tiempo a mi familia y a mis pasatiempos.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- PLAN DE 90 DÍAS -->
+  <section class="seccion calido" id="plan" aria-labelledby="t-plan">
+    <div class="contenedor">
+      <h2 id="t-plan">Mis próximos 90 días</h2>
+
+      <div class="resumen">
+        <span id="cuenta" aria-live="polite">0 de 6 acciones hechas</span>
+        <span class="barra-plan" id="barra-plan" aria-hidden="true"></span>
+      </div>
+
+      <ul class="plan-lista">
+        <li><label><input type="checkbox"><span>Escribir mi visión a 10 años en una hoja y pegarla donde la vea todos los días</span></label></li>
+        <li><label><input type="checkbox"><span>Abrir una cuenta de ahorro y programar un depósito mensual</span></label></li>
+        <li><label><input type="checkbox"><span>Fijar un horario de ejercicio y cumplirlo durante cuatro semanas</span></label></li>
+        <li><label><input type="checkbox"><span>Hablar con una persona que ya haga lo que quiero hacer</span></label></li>
+        <li><label><input type="checkbox"><span>Inscribirme en un curso o taller que me acerque a mi meta</span></label></li>
+        <li><label><input type="checkbox"><span>Revisar este plan con alguien de confianza</span></label></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <p><strong>Maycol</strong>. Reviso este proyecto de vida cada seis meses. Última revisión: septiembre de 2026.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var raiz = document.documentElement;
+  raiz.classList.add('js');
+  var reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Título de inicio: separa las palabras para que aparezcan en secuencia */
+  var h1 = document.querySelector('.inicio h1');
+  if (h1 && !reducido) {
+    var palabras = h1.textContent.trim().split(/\s+/);
+    h1.setAttribute('aria-label', palabras.join(' '));
+    h1.textContent = '';
+    palabras.forEach(function (texto, i) {
+      var s = document.createElement('span');
+      s.className = 'palabra';
+      s.style.setProperty('--i', i);
+      s.setAttribute('aria-hidden', 'true');
+      s.textContent = texto;
+      h1.appendChild(s);
+      h1.appendChild(document.createTextNode(' '));
+    });
+  }
+
+  /* Ruta: la línea se rellena a medida que haces scroll */
+  var hitos = Array.prototype.slice.call(document.querySelectorAll('.hito'));
+
+  function actualizarRuta() {
+    var ref = window.innerHeight * 0.6;
+    hitos.forEach(function (h) {
+      var r = h.getBoundingClientRect();
+      var seg = Math.min(1, Math.max(0, (ref - r.top) / r.height));
+      h.style.setProperty('--seg', seg);
+      h.classList.toggle('alcanzado', r.top < ref);
+    });
+  }
+
+  if (reducido) {
+    hitos.forEach(function (h) {
+      h.style.setProperty('--seg', 1);}}}
+      
